@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# abstrakcyjna klasa z której dziedziczy hidden layer i output layer
 class Layer(ABC):
     def __init__(self):
         self.neuron_num = None
@@ -8,5 +9,5 @@ class Layer(ABC):
         self.output = None
 
     @abstractmethod
-    def forward(self, inputs):  # idk czy potrzebuje forwarda, ja kto tylko w hidden bedzie
+    def forward(self, inputs):
         pass

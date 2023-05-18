@@ -37,6 +37,9 @@ class Neuron:
         output = activation_func(weighted_sum)
         return output
 
+
+# poniżej tylko jakieś testy są
+
 # dot product work like :
 # a = [1, 2, 3]
 # b = [2, 3, 4]
