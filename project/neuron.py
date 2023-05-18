@@ -38,7 +38,7 @@ class Neuron:
         return output
 
 
-# poniżej tylko jakieś testy są
+
 
 # dot product work like :
 # a = [1, 2, 3]
@@ -46,8 +46,3 @@ class Neuron:
 # dot_product = a[0] * b[0] + a[1] * b[1] + a[2] * b[2]   = 20
 #
 
-# neuron = Neuron(3)
-# neuron.set_inputs([1, 2, 3])
-# print(neuron.neuron_inputs)
-# print(neuron.weights)
-# print(neuron.forward())

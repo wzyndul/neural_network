@@ -27,9 +27,3 @@ class OutputLayer(Layer):
     # softmax
 
 
-# jakieś testy
-
-data = [[4.8, 1.21, 2.385]]
-print(softmax(data))
-# layer = OutputLayer(3, 3)
-# print(layer.forward(data))

@@ -21,6 +21,3 @@ def categorical_cross_entropy(y_true, y_pred):
     return loss
 
 
-labels = np.array([1, 0, 0])
-predicition = np.array([0.9, 0.2, 0.1])
-print(categorical_cross_entropy(labels, predicition))
