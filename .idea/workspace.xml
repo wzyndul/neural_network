@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a622590b-7320-48cf-875f-a7e8f8a49df2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/activation_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/activation_functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/hidden_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/hidden_layer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/loss_function.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/loss_function.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/layer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/loss_function.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/project/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/network.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/neuron.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/output_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/output_layer.py" afterDir="false" />
@@ -35,13 +37,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "C:/studia/semestr4/SztucznaInteligencja/neural_network/project/network.py"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/studia/semestr4/SztucznaInteligencja/neural_network/project/network.py&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\studia\semestr4\SztucznaInteligencja\neural_network\project\Data" />

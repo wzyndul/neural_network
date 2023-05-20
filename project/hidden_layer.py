@@ -15,14 +15,11 @@ class HiddenLayer(Layer):
         super().__init__()
         self.neuron_num = neuron_num
         self.input_num = input_num
-        self.neurons = np.array([Neuron(input_num) for _ in range(neuron_num)])
+        self.neurons = [Neuron(input_num) for _ in range(neuron_num)]
         # tworze numpy array w którym znajdują sie kolejne to neurony
 
     def forward(self, inputs):
         self.inputs = inputs
-        self.output = np.array([neuron.forward(inputs) for neuron in self.neurons])
+        self.output = [neuron.forward(inputs) for neuron in self.neurons]
         return self.output
         # dla każdego neuronu w mojej tablicy wywołuje funkcjie forward
-
-
-

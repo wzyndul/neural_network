@@ -30,3 +30,14 @@ def softmax(x):
     x_exp = np.exp(x - x_max)
     probabilities = x_exp / np.sum(x_exp)
     return probabilities
+
+
+def softmax_derivative(x):
+    softmax_output = softmax(x)
+    softmax_jacobian = np.diag(softmax_output) - np.outer(softmax_output, softmax_output)
+    return softmax_jacobian
+
+
+def sigmoid_derivative(x):
+    return np.exp(-x) / ((np.exp(-x) + 1) ** 2)
+
