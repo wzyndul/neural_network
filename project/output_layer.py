@@ -14,8 +14,9 @@ class OutputLayer(Layer):
 
     def forward(self, inputs):  # I only want to obtain weighted sums and not call any activation function
         self.inputs = inputs
-        weighted_sums = [neuron.forward(inputs) for neuron in self.neurons]
-        self.output = softmax(weighted_sums)  # now I call softmax function for entire array
+        # weighted_sums = [neuron.forward(inputs, activation_func=softmax) for neuron in self.neurons]
+        # self.output = softmax(weighted_sums)  # now I call softmax function for entire array
+        self.output = [neuron.forward(inputs) for neuron in self.neurons]
         return self.output
 
     #

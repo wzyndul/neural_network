@@ -8,7 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/neuron.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/output_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/output_layer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,5 +180,16 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/project/neuron.py</url>
+          <line>28</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

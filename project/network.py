@@ -1,3 +1,6 @@
+import numpy as np
+import pandas as pd
+
 from project.activation_functions import softmax_derivative, sigmoid_derivative
 from project.hidden_layer import HiddenLayer
 from project.output_layer import OutputLayer
@@ -59,28 +62,65 @@ def podziel_na_3_tablice(new_weights):
     return tables
 
 
+
+etykiety = ["random", "random2", "random3", "width", "name"]
+iris_data = pd.read_csv('Data/iris.csv', sep=',', names=etykiety)
+
+# Extract the 4th column ("width") and 5th column ("name") from iris_data
+width_column = iris_data["width"].values
+name_column = iris_data["name"].values
+
+# Create a new column based on conditions
+new_column = np.where(np.logical_or(name_column == "Iris-versicolor", name_column == "Iris-virginica"), 0, 1)
+
+# Create the NumPy array with the desired columns
+result_array = np.column_stack((width_column, new_column))
+
+
+
+
+
+
+
 learning_rate = 0.15
-network = Network(2, 3)
-data = [1, 2, 3]
-true = [1, 0, 0]
-network.set_inputs(data)
-for x in network.layer_list:
-    x.set_true_values(true)
+network = Network(1, 1)
 
-for dupa in range(101):
-    network.set_inputs(data)
-    forward1 = network.layer_list[0].forward(data)
-    forward2 = network.layer_list[1].forward(forward1)
-    output = network.layer_list[2].forward(forward2)
-    # print(output)
-    gradient = network.calculate_gradients()
-    # print(gradient)
 
-    trzy_tablice = podziel_na_3_tablice(gradient)
-    network.layer_list[2].update_weights(trzy_tablice[0], learning_rate)
-    network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
-    network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
+np.random.shuffle(result_array)
 
-    if dupa == 0 or dupa == 100:
-        print(output)
+
+SGTALA = 2000
+for dupa in range(SGTALA):
+
+    np.random.shuffle(result_array)
+    for x in result_array:
+        table1 = [x[0]]
+        table2 = [x[1]]
+
+        network.set_inputs(table1)
+        for net in network.layer_list:
+            net.set_true_values(table2)
+
+        network.set_inputs(table1)
+        forward1 = network.layer_list[0].forward(table1)
+        output = network.layer_list[1].forward(forward1)
+
+        gradient = network.calculate_gradients()
+
+
+    # trzy_tablice = podziel_na_3_tablice(gradient)
+    #print(gradient)
+
+
+
+    # network.layer_list[2].update_weights(trzy_tablice[0], learning_rate)
+    # network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
+    # network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
+
+        network.layer_list[1].update_weights(gradient[0], learning_rate)
+        network.layer_list[0].update_weights(gradient[1], learning_rate)
+
+        if dupa == SGTALA - 1:
+            # sorted_array = result_array[result_array[:, 1].argsort()]
+            print(str(output) + " " + str(table2))
 
