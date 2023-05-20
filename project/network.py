@@ -22,12 +22,8 @@ class Network:
         else:
             result = 0
             for j in range(self.layer_list[i + 1].neuron_num):
-                if i + 1 == len(self.layer_list) - 1:
-                    result += self.layer_list[i + 1].neurons[j].weighted_sum * softmax_derivative(
-                        self.layer_list[i + 1].weighted_sum()) * self.next_d(i + 1, k)
-                else:
-                    result += self.layer_list[i + 1].neurons[j].weighted_sum * sigmoid_derivative(
-                        self.layer_list[i + 1].neurons[j].weighted_sum) * self.next_d(i + 1, k)
+                result += self.layer_list[i + 1].neurons[j].weighted_sum * sigmoid_derivative(
+                    self.layer_list[i + 1].neurons[j].weighted_sum) * self.next_d(i + 1, k)
             return result
 
     def set_inputs(self, inputs):
@@ -42,33 +38,49 @@ class Network:
             if i == 0:
                 for j in range(layer.neuron_num):
                     for k in range(len(self.inputs)):
-                        gradient_list.append(
-                            self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i, k))
-
-            elif i == len(self.layer_list) - 1:
-                for j in range(layer.neuron_num):
-                    for k in range(lower_layer.neuron_num):
-                        gradient_list.append(
-                            lower_layer.output[k] * softmax_derivative(layer.weighted_sum()) * layer.loss(j))
+                        gradient_list.append(self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i, k))
 
             else:
                 for j in range(layer.neuron_num):
                     for k in range(lower_layer.neuron_num):
-                        gradient_list.append(
-                            lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i,
+                        gradient_list.append(lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i,
                                                                                                                     k))
         return gradient_list
 
 
+def podziel_na_3_tablice(new_weights):
+    num_tables = len(new_weights) // 3  # czy to atomowe?????
+    tables = []
+    for i in range(num_tables):
+        start_index = i * 3
+        end_index = start_index + 3
+        table = new_weights[start_index:end_index]
+        tables.append(table)
+    return tables
+
+
+learning_rate = 0.15
 network = Network(2, 3)
 data = [1, 2, 3]
 true = [1, 0, 0]
+network.set_inputs(data)
 for x in network.layer_list:
     x.set_true_values(true)
-forward1 = network.layer_list[0].forward(data)
-forward2 = network.layer_list[1].forward(forward1)
-output = network.layer_list[2].forward(forward2)
 
-print(output)
-# print(network.calculate_gradients())
+for dupa in range(101):
+    network.set_inputs(data)
+    forward1 = network.layer_list[0].forward(data)
+    forward2 = network.layer_list[1].forward(forward1)
+    output = network.layer_list[2].forward(forward2)
+    # print(output)
+    gradient = network.calculate_gradients()
+    # print(gradient)
+
+    trzy_tablice = podziel_na_3_tablice(gradient)
+    network.layer_list[2].update_weights(trzy_tablice[0], learning_rate)
+    network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
+    network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
+
+    if dupa == 0 or dupa == 100:
+        print(output)
 

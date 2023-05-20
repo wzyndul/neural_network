@@ -25,6 +25,10 @@ class Neuron:
     def loss_function(self, true_value):
         return np.mean((self.output - true_value) ** 2)
 
+    def update_weight(self, learning_rate, deltas):
+        deltas = np.array(deltas)
+        self.weights += (deltas * (-1) * learning_rate)
+
 # dot product work like :
 # a = [1, 2, 3]
 # b = [2, 3, 4]
