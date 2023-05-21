@@ -6,8 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="a622590b-7320-48cf-875f-a7e8f8a49df2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/activation_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/activation_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/hidden_layer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/neuron.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/output_layer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/training.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,60 +231,6 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/test.py</url>
-          <line>122</line>
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/test.py</url>
-          <line>246</line>
-          <option name="timeStamp" value="38" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>100</line>
-          <option name="timeStamp" value="39" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>104</line>
-          <option name="timeStamp" value="40" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>108</line>
-          <option name="timeStamp" value="41" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>62</line>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/test.py</url>
-          <line>102</line>
-          <option name="timeStamp" value="47" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>75</line>
-          <option name="timeStamp" value="49" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>60</line>
-          <option name="timeStamp" value="50" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>58</line>
-          <option name="timeStamp" value="51" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="self.weights" />

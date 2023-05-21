@@ -1,10 +1,5 @@
-# inicjalizacja wag neuronu
-# obliczanie sumy wejsc,
-# aktywowanie funkcji aktywacji
-# mozna na sztywno bias = 0, i najwyżej zmieniac, albo jakims parametrem boolowskim czy cso
-
 import numpy as np
-from activation_functions import sigmoid, softmax
+from activation_functions import sigmoid
 
 
 class Neuron:

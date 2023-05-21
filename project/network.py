@@ -1,9 +1,6 @@
 import numpy as np
-import pandas as pd
-
-from project.activation_functions import softmax_derivative, sigmoid_derivative
-from project.hidden_layer import HiddenLayer
-from project.output_layer import OutputLayer
+from project.activation_functions import sigmoid_derivative, mean_squared_error
+from project.layer import Layer
 
 
 class Network:
@@ -11,13 +8,13 @@ class Network:
         self.layer_num = layer_num
         self.input_num = input_num
         self.layer_list = []
-        self.inputs = []
         inputs = input_num
         for i in range(layer_num):
             neuron_num = int(input(f"Enter number of neurons in {i + 1} hidden layer: "))
-            self.layer_list.append(HiddenLayer(inputs, neuron_num))
+            self.layer_list.append(Layer(inputs, neuron_num))
             inputs = neuron_num
-        self.layer_list.append(OutputLayer(inputs, int(input("Enter number of neurons in output layer: "))))
+        self.layer_list.append(Layer(inputs, int(input("Enter number of neurons in output layer: "))))
+
 
         weights = []
         w = np.zeros((input_num, self.layer_list[0].neuron_num))
@@ -64,7 +61,7 @@ class Network:
 
         # return error
 
-    def gradient_descent(self, learning_rate):
+    def update_weights(self, learning_rate):
         """Learns by descending the gradient
         Args:
             learning_rate (float): How fast to learn.
@@ -75,12 +72,10 @@ class Network:
             derivatives = self.derivatives[i]
             weights -= derivatives.T * learning_rate
 
-    def update_weights(self):
+    def update_neurons_weights(self):
         for x in range(len(self.layer_list)):
             self.layer_list[x].update_weights(self.weights[x])
 
-    def set_inputs(self, inputs):
-        self.inputs = inputs
 
     def train(self, inputs, targets, epochs, learning_rate):
         """Trains model by running forward prop and backprop
@@ -106,11 +101,11 @@ class Network:
 
                 # now perform gradient descent on the derivatives
                 # (this will update the weights and biases)
-                self.gradient_descent(learning_rate)
-                self.update_weights()
+                self.update_weights(learning_rate)
+                self.update_neurons_weights()
 
                 # keep track of the MSE for reporting later
-                sum_errors += self.mse(target, self.activations[-1])
+                sum_errors += mean_squared_error(target, self.activations[-1])
 
             # Epoch complete, report the training error
             print("Error: {} at epoch {}".format(sum_errors / len(inputs), i + 1))
@@ -118,54 +113,9 @@ class Network:
         print("Training complete!")
         print("=====")
 
-    def mse(self, target, output):
-        """Mean Squared Error loss function
-        Args:
-            target (ndarray): The ground truth
-            output (ndarray): The predicted values
-        Returns:
-            (float): Output
-        """
-        return np.average((target - output) ** 2)
 
 
-# etykiety = ["random", "random2", "random3", "width", "name"]
-# iris_data = pd.read_csv('Data/iris.csv', sep=',', names=etykiety)
 #
-# # Extract the 4th column ("width") and 5th column ("name") from iris_data
-# width_column = iris_data["width"].values
-# name_column = iris_data["name"].values
-#
-# # Create a new column based on conditions
-# new_column = np.where(np.logical_or(name_column == "Iris-versicolor", name_column == "Iris-virginica"), 0, 1)
-#
-# # Create the NumPy array with the desired columns
-# result_array = np.column_stack((width_column, new_column))
-#
-# training_data = result_array[:100]  # 100 pierwszych
-#
-# test_data = result_array[:50]  # 50 ostatnich
-#
-# # learning_rate = 0.6
-# # momentum = 0.6
-# # network = Network(1, 3)
-# # data = [0.2, 0.1, 0.3]
-#
-# # network.set_inputs(data)
-# # forward1 = network.layer_list[0].forward(data)
-# # output = network.layer_list[1].forward(forward1)
-# # print(output)
-#
-# # network.forward(data)
-# # print(network.weights)
-# # network.back_propagation([0.34, 0.32, 0.23])
-# # network.gradient_descent(0.6)
-# # print("network:")
-# # print(network.weights)
-# # network.update_weights()
-# # print("przekazano do neuronow")
-# # for x in network.layer_list:
-# #     print(x.get_weights())
 
 if __name__ == "__main__":
     data = []
@@ -196,7 +146,7 @@ if __name__ == "__main__":
     targets_test = test_data[:, 4:7]
 
     # create a Multilayer Perceptron with one hidden layer
-    mlp = Network(1, 4)
+    mlp = Network(2, 4)
 
     # train network
     mlp.train(items, targets, 130, 0.3)
@@ -210,3 +160,8 @@ if __name__ == "__main__":
 
 
 
+#TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
+#TODO wszelkie zapisywanie stanu do sieci itd
+#TODO zmienic inicjalizacje tych weights, derivatives itd
+#TODO zmienic trening
+#TODO ogarnac lepiej backpropagacje na odpowiedz
