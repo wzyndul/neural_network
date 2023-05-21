@@ -19,20 +19,9 @@ class Layer(ABC):
     def weighted_sum(self):
         return np.array([neuron.weighted_sum for neuron in self.neurons])
 
-    def update_weights(self, new_weights,):
-        # num_tables = len(new_weights) // self.neuron_num # czy to atomowe?????
-        # tables = []
-        #
-        # for i in range(num_tables):
-        #     start_index = i * self.neuron_num
-        #     end_index = start_index + self.neuron_num
-        #     table = new_weights[start_index:end_index]
-        #     tables.append(table)
-        #
-        # for neuron, table in zip(self.neurons, tables):
-        #     neuron.update_weight(learning_rate, table)
-        for neuron in self.neurons:  # teraz tylko dla po jednym neuronie
-            neuron.update_weight(new_weights)
+    def update_weights(self, new_weights):
+        for x in range(len(self.neurons)):  # teraz tylko dla po jednym neuronie
+            self.neurons[x].update_weight(new_weights[x])
 
     def get_weights(self):
         arr = np.array([neuron.weights for neuron in self.neurons])

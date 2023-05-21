@@ -103,7 +103,6 @@ class MLP(object):
         for i in reversed(range(len(self.derivatives))):
             # get activation for previous layer
             activations = self.activations[i + 1]
-            print(str(error) + "XDDDDDDDd")
 
             # apply sigmoid derivative function
             delta = error * self._sigmoid_derivative(activations)
