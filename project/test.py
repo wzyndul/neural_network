@@ -229,22 +229,34 @@ if __name__ == "__main__":
                 data.append(features + target)
 
     data = np.array(data)
-    items = data[:, :4]
-    targets = data[:, 4:7]
+
+    training_data = data[:130]
+    test_data = data[130:]
+
+
+    items = training_data[:, :4]
+    targets = training_data[:, 4:7]
+
+    items_test = test_data[:, :4]
+    targets_test = test_data[:, 4:7]
 
     # create a Multilayer Perceptron with one hidden layer
     mlp = MLP(4, [5], 3, False, 0)
 
     # train network
-    mlp.train(items, targets, 150, 0.3)
+    mlp.train(items, targets, 120, 0.3)
 
     # create dummy data
-    input = np.array([5.1, 3.5, 1.4, 0.2])
 
-    # get a prediction
-    output = mlp.forward_propagate(input)
 
-    print(mlp.weights[0])
-    print(mlp.activations)
+    for j, input in enumerate(items_test):
+        target = targets_test[j]
+        output = mlp.forward_propagate(input)
+
+            # activate the network!
+        print(f"{output} wynik sieci\n {target} wynik wzorcowy")
+
+
+
     # print()
     # print("Our network believes that {}  {}  {}".format(output[0], output[1], output[2]))

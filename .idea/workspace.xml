@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a622590b-7320-48cf-875f-a7e8f8a49df2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/network.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/test.py" afterDir="false" />
     </list>
@@ -234,13 +233,8 @@
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/network.py</url>
-          <line>200</line>
-          <option name="timeStamp" value="37" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/project/test.py</url>
-          <line>238</line>
+          <line>246</line>
           <option name="timeStamp" value="38" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -271,9 +265,24 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/project/network.py</url>
           <line>75</line>
-          <option name="timeStamp" value="48" />
+          <option name="timeStamp" value="49" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/project/network.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/project/network.py</url>
+          <line>58</line>
+          <option name="timeStamp" value="51" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="self.weights" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

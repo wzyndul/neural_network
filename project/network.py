@@ -20,18 +20,18 @@ class Network:
         self.layer_list.append(OutputLayer(inputs, int(input("Enter number of neurons in output layer: "))))
 
         weights = []
-        w = np.zeros((self.layer_list[0].neuron_num, input_num))  # tutaj na odwrot jakby
+        w = np.zeros((input_num, self.layer_list[0].neuron_num))
         weights.append(w)
         for i in range(len(self.layer_list) - 1):
-            w = np.zeros((self.layer_list[i + 1].neuron_num, self.layer_list[i].neuron_num))
+            w = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
             weights.append(w)
         self.weights = weights
 
         derivatives = []
-        d = np.zeros((self.layer_list[0].neuron_num, input_num))  # tutaj na odwrot jakby
+        d = np.zeros((input_num, self.layer_list[0].neuron_num))
         derivatives.append(d)
         for i in range(len(self.layer_list) - 1):
-            d = np.zeros((self.layer_list[i + 1].neuron_num, self.layer_list[i].neuron_num))
+            d = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
             derivatives.append(d)
         self.derivatives = derivatives
 
@@ -60,9 +60,9 @@ class Network:
             curr_act_resh = curr_act.reshape(curr_act.shape[0], -1)
             self.derivatives[x] = np.dot(curr_act_resh, delta_resh)
 
-            error = np.dot(delta, self.weights[x].T)
+            error = np.dot(delta, self.weights[x])
 
-        return error
+        # return error
 
     def gradient_descent(self, learning_rate):
         """Learns by descending the gradient
@@ -73,7 +73,7 @@ class Network:
         for i in range(len(self.weights)):
             weights = self.weights[i]
             derivatives = self.derivatives[i]
-            weights += derivatives * learning_rate
+            weights -= derivatives.T * learning_rate
 
     def update_weights(self):
         for x in range(len(self.layer_list)):
@@ -100,13 +100,14 @@ class Network:
                 # activate the network!
                 self.forward(input)
 
-                error = target - self.activations[-1]  # to bede outputy sieci
+                error = self.activations[-1] - target # to bede outputy sieci
 
                 self.back_propagation(error)
 
                 # now perform gradient descent on the derivatives
                 # (this will update the weights and biases)
                 self.gradient_descent(learning_rate)
+                self.update_weights()
 
                 # keep track of the MSE for reporting later
                 sum_errors += self.mse(target, self.activations[-1])
@@ -201,12 +202,11 @@ if __name__ == "__main__":
     mlp.train(items, targets, 130, 0.3)
 
 
-    for x in range(len(items_test)):
-        for j, input in enumerate(items_test):
-            target = targets_test[j]
 
-            # activate the network!
-            print(f"{mlp.forward(input)} wynik sieci\n {target} wynik wzorcowy")
+    for j, input in enumerate(items_test):
+        target = targets_test[j]
+        mlp.forward(input)
+        print(f"{mlp.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
 
 
 
