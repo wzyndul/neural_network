@@ -10,13 +10,13 @@ class OutputLayer(Layer):
         super().__init__()
         self.neuron_num = neuron_num
         self.input_num = input_num
-        self.neurons = [Neuron(input_num) for _ in range(neuron_num)]
+        self.neurons = np.array([Neuron(input_num) for _ in range(neuron_num)])
 
     def forward(self, inputs):  # I only want to obtain weighted sums and not call any activation function
         self.inputs = inputs
         # weighted_sums = [neuron.forward(inputs, activation_func=softmax) for neuron in self.neurons]
         # self.output = softmax(weighted_sums)  # now I call softmax function for entire array
-        self.output = [neuron.forward(inputs) for neuron in self.neurons]
+        self.output = np.array([neuron.forward(inputs) for neuron in self.neurons])
         return self.output
 
 
@@ -27,5 +27,5 @@ class OutputLayer(Layer):
         return summ / len(self.neurons)
 
     def loss(self, index):  # zwraca pochodną funckji straty
-        return 2* (self.forward(self.inputs)[index] - self.true_values[index])
+        return self.forward(self.inputs)[index] - self.true_values[index]
         # return 2 * (self.forward(self.inputs)[index] - self.true_values[index])

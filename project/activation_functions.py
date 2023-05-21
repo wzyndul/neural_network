@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def sigmoid(x: float):
+def sigmoid(x):
     """
     Calculates the sigmoid function for a given input.
     It maps any real-valued number to a value between 0 and 1.
@@ -39,7 +39,11 @@ def softmax_derivative(x):
 
 
 def sigmoid_derivative(x):
-    return np.exp(-x) / ((np.exp(-x) + 1) ** 2)
-
-# print(sigmoid_derivative(-0.1842302012614773))
+    """Sigmoid derivative function
+    Args:
+        x (float): Value to be processed
+    Returns:
+        y (float): Output
+    """
+    return x * (1.0 - x)
 

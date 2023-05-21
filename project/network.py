@@ -19,57 +19,83 @@ class Network:
             inputs = neuron_num
         self.layer_list.append(OutputLayer(inputs, int(input("Enter number of neurons in output layer: "))))
 
-    def next_d(self, i, k):
-        if i == len(self.layer_list) - 1:
-            loss = self.layer_list[-1].loss(k)
-            return loss
-        else:
-            result = 0
-            for j in range(self.layer_list[i + 1].neuron_num):
-                wagi = self.layer_list[i + 1].neurons[j].weights[j]
-                sigmoida = sigmoid_derivative(self.layer_list[i + 1].neurons[j].weighted_sum)
-                next = self.next_d(i + 1, k)
-                # result += self.layer_list[i + 1].neurons[j].weighted_sum * sigmoid_derivative(
-                #     self.layer_list[i + 1].neurons[j].weighted_sum) * self.next_d(i + 1, k)
-                result += wagi * sigmoida * next
-            return result
+        weights = []
+        w = np.zeros((input_num, self.layer_list[0].neuron_num))
+        weights.append(w)
+        for i in range(len(self.layer_list) - 1):
+            w = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
+            weights.append(w)
+        self.weights = weights
+
+        derivatives = []
+        d = np.zeros((input_num, self.layer_list[0].neuron_num))
+        derivatives.append(d)
+        for i in range(len(self.layer_list) - 1):
+            d = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
+            derivatives.append(d)
+        self.derivatives = derivatives
+
+        activations = []
+        a = np.zeros(input_num)
+        activations.append(a)
+        for i in range(len(self.layer_list)):
+            a = np.zeros(self.layer_list[i].neuron_num)
+            activations.append(a)
+        self.activations = activations
+
+    def forward(self, inputs):
+        self.activations[0] = np.array(inputs)
+        next_activation = self.activations[0]
+        for x in range(len(self.layer_list)):
+            next_activation = self.layer_list[x].forward(next_activation)
+            self.activations[x + 1] = next_activation
+            # print(self.layer_list[x].get_weights())
+            self.weights[x] = self.layer_list[x].get_weights()
+
+    def back_propagation(self, error):
+        for x in reversed(range(len(self.derivatives))):
+            activation = self.activations[x + 1]
+            delta = error * sigmoid_derivative(activation)
+            delta_resh = delta.reshape(delta.shape[0], -1).T
+            curr_act = self.activations[x]
+            curr_act_resh = curr_act.reshape(curr_act.shape[0], -1)
+            self.derivatives[x] = np.dot(curr_act_resh, delta_resh)
+
+            error = np.dot(delta, self.weights[x].T)
+
+        return error
+
+
+    def gradient_descent(self, learning_rate):
+        """Learns by descending the gradient
+        Args:
+            learning_rate (float): How fast to learn.
+        """
+        # update the weights and biases by stepping down the gradient
+        for i in range(len(self.weights)):
+            weights = self.weights[i]
+            derivatives = self.derivatives[i]
+            weights += derivatives * learning_rate
+
+    def update_weights(self):
+        pass
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def set_inputs(self, inputs):
         self.inputs = inputs
 
-    def calculate_gradients(self):
-        gradient_list = []
-        for i in range(len(self.layer_list) - 1, -1, -1):  # im going from last index to first
-            layer = self.layer_list[i]
-            lower_layer = self.layer_list[i - 1]
-            # warunek jakis bo jak dojde do 0 indexu to wtedy bede operowal inaczej troche
-            if i == 0:
-                for j in range(layer.neuron_num):
-                    for k in range(len(self.inputs)):
-                        pierwsza_czesc = self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum)
-                        druga_czesc = self.next_d(i, k)
-                        # gradient_list.append(self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i, k))
-                        gradient_list.append(pierwsza_czesc *  druga_czesc)
-
-            else:
-                for j in range(layer.neuron_num):
-                    for k in range(lower_layer.neuron_num):
-                        pierwsza_czesc = lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum)
-                        druga_czesc = self.next_d(i,k)
-                        # gradient_list.append(lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i,k))
-                        gradient_list.append(pierwsza_czesc * druga_czesc)
-        return gradient_list
-
-
-def podziel_na_3_tablice(new_weights):
-    num_tables = len(new_weights) // 3  # czy to atomowe?????
-    tables = []
-    for i in range(num_tables):
-        start_index = i * 3
-        end_index = start_index + 3
-        table = new_weights[start_index:end_index]
-        tables.append(table)
-    return tables
 
 
 
@@ -86,82 +112,71 @@ new_column = np.where(np.logical_or(name_column == "Iris-versicolor", name_colum
 # Create the NumPy array with the desired columns
 result_array = np.column_stack((width_column, new_column))
 
-training_data = result_array[:100] # 100 pierwszych
+training_data = result_array[:100]  # 100 pierwszych
 
-
-test_data = result_array[:50] # 50 ostatnich
+test_data = result_array[:50]  # 50 ostatnich
 
 learning_rate = 0.6
 momentum = 0.6
-network = Network(1, 1)
+network = Network(1, 3)
+data = [0.2, 0.1, 0.3]
 
+# network.set_inputs(data)
+# forward1 = network.layer_list[0].forward(data)
+# output = network.layer_list[1].forward(forward1)
+# print(output)
+
+network.forward(data)
+print(network.weights)
+network.back_propagation([0.34, 0.32, 0.23])
+network.gradient_descent(0.6)
+print("network:")
+print(network.weights)
 
 # np.random.shuffle(result_array)
 
-SGTALA = 200
-for dupa in range(SGTALA):
-
-    sredni_koszt = 0
-
-    np.random.shuffle(training_data)
-    for x in training_data:
-        table1 = [x[0]]
-        table2 = [x[1]]
-    #     table1 = [0.2]
-    #     table2 = [1]
-
-        network.set_inputs(table1)
-        for net in network.layer_list:
-            net.set_true_values(table2)
-
-        network.set_inputs(table1)
-        forward1 = network.layer_list[0].forward(table1)
-        output = network.layer_list[1].forward(forward1)
-
-        gradient = network.calculate_gradients()
-
-
-    # trzy_tablice = podziel_na_3_tablice(gradient)
-    #print(gradient)
-
-
-
-    # network.layer_list[2].update_weights(trzy_tablice[0], learning_rate)
-    # network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
-    # network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
-
-        network.layer_list[1].update_weights(gradient[0], learning_rate, momentum)
-        network.layer_list[0].update_weights(gradient[1], learning_rate, momentum)
-
-        sredni_koszt += network.layer_list[1].mean_loss()
-        # if dupa == SGTALA - 1:
-        #     print(f"output {output} desired output {table2}")
-
-    if dupa == SGTALA - 1 or dupa == 0:
-        # sorted_array = result_array[result_array[:, 1].argsort()]
-        # print(str(output) + " " + str(table2))
-        print(f"sredni koszt {sredni_koszt / 150}")
-        # print(f"output {output} desired output {table2}")
-
-
-            # print(f"sredni koszt {sredni_koszt}")
-            # print(f"output {output}")
-
-
-
-
+# SGTALA = 2
+# for dupa in range(SGTALA):
 #
-# for x in test_data:
-#     table1 = [x[0]]
-#     table2 = [x[1]]
+#     sredni_koszt = 0
 #
-#     network.set_inputs(table1)
-#     for net in network.layer_list:
-#         net.set_true_values(table2)
+#     np.random.shuffle(training_data)
+#     for x in training_data:
+#         table1 = [x[0]]
+#         table2 = [x[1]]
+#         #     table1 = [0.2]
+#         #     table2 = [1]
 #
-#     network.set_inputs(table1)
-#     forward1 = network.layer_list[0].forward(table1)
-#     output = network.layer_list[1].forward(forward1)
-
-
-
+#         network.set_inputs(table1)
+#         for net in network.layer_list:
+#             net.set_true_values(table2)
+#
+#         network.set_inputs(table1)
+#         forward1 = network.layer_list[0].forward(table1)
+#         output = network.layer_list[1].forward(forward1)
+#
+#         gradient = network.calculate_gradients()
+#
+#         # trzy_tablice = podziel_na_3_tablice(gradient)
+#         # print(gradient)
+#
+#         # network.layer_list[2].update_weights(trzy_tablice[0], learning_rate)
+#         # network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
+#         # network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
+#
+#         network.layer_list[1].update_weights(gradient[0], learning_rate, momentum)
+#         network.layer_list[0].update_weights(gradient[1], learning_rate, momentum)
+#
+#         sredni_koszt += network.layer_list[1].mean_loss()
+#         # if dupa == SGTALA - 1:
+#         #     print(f"output {output} desired output {table2}")
+#
+#     if dupa == SGTALA - 1 or dupa == 0:
+#         pass
+#         # sorted_array = result_array[result_array[:, 1].argsort()]
+#         # print(str(output) + " " + str(table2))
+#         # print(f"sredni koszt {sredni_koszt / 150}")
+#         # print(f"output {output} desired output {table2}")
+#
+#         # print(f"sredni koszt {sredni_koszt}")
+#         # print(f"output {output}")

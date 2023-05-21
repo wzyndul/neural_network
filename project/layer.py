@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 
-
 # abstrakcyjna klasa z której dziedziczy hidden layer i output layer
+import numpy as np
+
+
 class Layer(ABC):
     def __init__(self):
         self.neuron_num = None
@@ -15,9 +17,9 @@ class Layer(ABC):
         self.true_values = values
 
     def weighted_sum(self):
-        return [neuron.weighted_sum for neuron in self.neurons]
+        return np.array([neuron.weighted_sum for neuron in self.neurons])
 
-    def update_weights(self, new_weights, learning_rate, momentum):
+    def update_weights(self, new_weights,):
         # num_tables = len(new_weights) // self.neuron_num # czy to atomowe?????
         # tables = []
         #
@@ -30,8 +32,11 @@ class Layer(ABC):
         # for neuron, table in zip(self.neurons, tables):
         #     neuron.update_weight(learning_rate, table)
         for neuron in self.neurons:  # teraz tylko dla po jednym neuronie
-            neuron.update_weight(learning_rate, new_weights, momentum)
+            neuron.update_weight(new_weights)
 
+    def get_weights(self):
+        arr = np.array([neuron.weights for neuron in self.neurons])
+        return arr
 
     @abstractmethod
     def forward(self, inputs):
