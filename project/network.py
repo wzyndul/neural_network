@@ -1,5 +1,5 @@
 import numpy as np
-from project.activation_functions import sigmoid_derivative, mean_squared_error
+from project.functions import sigmoid_derivative, mean_squared_error
 from project.layer import Layer
 
 
@@ -8,40 +8,29 @@ class Network:
         self.layer_num = layer_num
         self.input_num = input_num
         self.layer_list = []
-        inputs = input_num
+        inputs_layer = input_num
         for i in range(layer_num):
             neuron_num = int(input(f"Enter number of neurons in {i + 1} hidden layer: "))
-            self.layer_list.append(Layer(inputs, neuron_num))
-            inputs = neuron_num
-        self.layer_list.append(Layer(inputs, int(input("Enter number of neurons in output layer: "))))
+            self.layer_list.append(Layer(inputs_layer, neuron_num))
+            inputs_layer = neuron_num
+        self.layer_list.append(Layer(inputs_layer, int(input("Enter number of neurons in output layer: "))))
 
-
-        weights = []
-        w = np.zeros((input_num, self.layer_list[0].neuron_num))
-        weights.append(w)
-        for i in range(len(self.layer_list) - 1):
-            w = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
-            weights.append(w)
-        self.weights = weights
-
-        derivatives = []
-        d = np.zeros((input_num, self.layer_list[0].neuron_num))
-        derivatives.append(d)
-        for i in range(len(self.layer_list) - 1):
-            d = np.zeros((self.layer_list[i].neuron_num, self.layer_list[i + 1].neuron_num))
-            derivatives.append(d)
+        derivatives = [np.zeros((input_num, self.layer_list[0].neuron_num))]
+        derivatives.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
+                            enumerate(self.layer_list[:-1])])
         self.derivatives = derivatives
 
-        activations = []
-        a = np.zeros(input_num)
-        activations.append(a)
-        for i in range(len(self.layer_list)):
-            a = np.zeros(self.layer_list[i].neuron_num)
-            activations.append(a)
+        activations = [np.zeros(input_num)]
+        activations.extend([np.zeros(layer.neuron_num) for layer in self.layer_list])
         self.activations = activations
 
-    def forward(self, inputs):
-        self.activations[0] = np.array(inputs)
+        weights = [np.zeros((input_num, self.layer_list[0].neuron_num))]
+        weights.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
+                        enumerate(self.layer_list[:-1])])
+        self.weights = weights
+
+    def forward(self, input_vector):
+        self.activations[0] = np.array(input_vector)
         next_activation = self.activations[0]
         for x in range(len(self.layer_list)):
             next_activation = self.layer_list[x].forward(next_activation)
@@ -59,14 +48,7 @@ class Network:
 
             error = np.dot(delta, self.weights[x])
 
-        # return error
-
     def update_weights(self, learning_rate):
-        """Learns by descending the gradient
-        Args:
-            learning_rate (float): How fast to learn.
-        """
-        # update the weights and biases by stepping down the gradient
         for i in range(len(self.weights)):
             weights = self.weights[i]
             derivatives = self.derivatives[i]
@@ -76,46 +58,25 @@ class Network:
         for x in range(len(self.layer_list)):
             self.layer_list[x].update_weights(self.weights[x])
 
-
     def train(self, inputs, targets, epochs, learning_rate):
-        """Trains model by running forward prop and backprop
-        Args:
-            inputs (ndarray): X
-            targets (ndarray): Y
-            epochs (int): Num. epochs we want to train the network for
-            learning_rate (float): Step to apply to gradient descent
-        """
-        # now enter the training loop
+
         for i in range(epochs):
             sum_errors = 0
-            # iterate through all the training data
             for j, input in enumerate(inputs):
                 target = targets[j]
 
-                # activate the network!
                 self.forward(input)
 
-                error = self.activations[-1] - target # to bede outputy sieci
+                error = self.activations[-1] - target  # to bede outputy sieci
 
                 self.back_propagation(error)
-
-                # now perform gradient descent on the derivatives
-                # (this will update the weights and biases)
                 self.update_weights(learning_rate)
                 self.update_neurons_weights()
 
-                # keep track of the MSE for reporting later
                 sum_errors += mean_squared_error(target, self.activations[-1])
 
-            # Epoch complete, report the training error
-            print("Error: {} at epoch {}".format(sum_errors / len(inputs), i + 1))
+            print(f"Error: {sum_errors / len(inputs)} at epoch {i + 1}")
 
-        print("Training complete!")
-        print("=====")
-
-
-
-#
 
 if __name__ == "__main__":
     data = []
@@ -138,9 +99,8 @@ if __name__ == "__main__":
     training_data = data[:130]
     test_data = data[130:]
 
-
-    items = training_data[:, :4]
-    targets = training_data[:, 4:7]
+    items_data = training_data[:, :4]
+    targets_data = training_data[:, 4:7]
 
     items_test = test_data[:, :4]
     targets_test = test_data[:, 4:7]
@@ -149,19 +109,15 @@ if __name__ == "__main__":
     mlp = Network(2, 4)
 
     # train network
-    mlp.train(items, targets, 130, 0.3)
+    mlp.train(items_data, targets_data, 130, 0.3)
 
-
-
-    for j, input in enumerate(items_test):
+    for j, inputs in enumerate(items_test):
         target = targets_test[j]
-        mlp.forward(input)
+        mlp.forward(inputs)
         print(f"{mlp.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
 
-
-
-#TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
-#TODO wszelkie zapisywanie stanu do sieci itd
-#TODO zmienic inicjalizacje tych weights, derivatives itd
-#TODO zmienic trening
-#TODO ogarnac lepiej backpropagacje na odpowiedz
+# TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
+# TODO wszelkie zapisywanie stanu do sieci itd
+# TODO zmienic inicjalizacje tych weights, derivatives itd
+# TODO zmienic trening
+# TODO ogarnac lepiej backpropagacje na odpowiedz
