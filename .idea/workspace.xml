@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="a622590b-7320-48cf-875f-a7e8f8a49df2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/activation_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/activation_functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/layer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/neuron.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/neuron.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/output_layer.py" beforeDir="false" afterPath="$PROJECT_DIR$/project/output_layer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,19 +35,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/studia/semestr4/SztucznaInteligencja/neural_network/project/network.py&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/studia/semestr4/SztucznaInteligencja/neural_network/project"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\studia\semestr4\SztucznaInteligencja\neural_network\project\Data" />
     </key>
   </component>
   <component name="RunManager" selected="Python.network">
+    <configuration name="activation_functions" type="PythonConfigurationType" factoryName="Python">
+      <module name="neural_network" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Wojciech Żyndul\AppData\Local\Programs\Python\Python39\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/project" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/activation_functions.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="hidden_layer" type="PythonConfigurationType" factoryName="Python">
       <module name="neural_network" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -157,6 +180,7 @@
       <item itemvalue="Python.output_layer" />
       <item itemvalue="Python.loss_function" />
       <item itemvalue="Python.network" />
+      <item itemvalue="Python.activation_functions" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -185,9 +209,9 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/project/neuron.py</url>
-          <line>28</line>
-          <option name="timeStamp" value="9" />
+          <url>file://$PROJECT_DIR$/project/network.py</url>
+          <line>40</line>
+          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

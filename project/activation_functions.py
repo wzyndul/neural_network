@@ -41,3 +41,5 @@ def softmax_derivative(x):
 def sigmoid_derivative(x):
     return np.exp(-x) / ((np.exp(-x) + 1) ** 2)
 
+# print(sigmoid_derivative(-0.1842302012614773))
+

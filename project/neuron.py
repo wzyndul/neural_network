@@ -14,6 +14,7 @@ class Neuron:
         self.bias = 0  # określić jeszcze ten parametr i dodac do opisu metody
         self.output = 0
         self.weighted_sum = 0
+        self.old_weights = self.weights
 
     def forward(self, inputs, activation_func=sigmoid) -> float:
         self.weighted_sum = np.dot(self.weights, inputs) # bez biasu na razie
@@ -25,9 +26,11 @@ class Neuron:
     def loss_function(self, true_value):
         return np.mean((self.output - true_value) ** 2)
 
-    def update_weight(self, learning_rate, deltas):
+    def update_weight(self, learning_rate, deltas, momentum):
+        składnik = momentum *(self.weights - self.old_weights)
+        self.old_weights = self.weights
         deltas = np.array(deltas)
-        self.weights += (deltas * (-1) * learning_rate)
+        self.weights += (deltas * (-1) * learning_rate) + składnik
 
 # dot product work like :
 # a = [1, 2, 3]

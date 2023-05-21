@@ -19,12 +19,13 @@ class OutputLayer(Layer):
         self.output = [neuron.forward(inputs) for neuron in self.neurons]
         return self.output
 
-    #
-    # def mean_loss(self):
-    #     summ = 0
-    #     for neuron, value in zip(self.neurons, self.true_values):
-    #         summ += neuron.loss_function(value)
-    #     return summ / len(self.neurons)
+
+    def mean_loss(self):
+        summ = 0
+        for neuron, value in zip(self.neurons, self.true_values):
+            summ += neuron.loss_function(value)
+        return summ / len(self.neurons)
 
     def loss(self, index):  # zwraca pochodną funckji straty
-        return (1 / 2 * len(self.true_values)) * (self.forward(self.inputs)[index] - self.true_values[index])
+        return 2* (self.forward(self.inputs)[index] - self.true_values[index])
+        # return 2 * (self.forward(self.inputs)[index] - self.true_values[index])

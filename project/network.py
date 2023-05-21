@@ -21,12 +21,17 @@ class Network:
 
     def next_d(self, i, k):
         if i == len(self.layer_list) - 1:
-            return self.layer_list[-1].loss(k)
+            loss = self.layer_list[-1].loss(k)
+            return loss
         else:
             result = 0
             for j in range(self.layer_list[i + 1].neuron_num):
-                result += self.layer_list[i + 1].neurons[j].weighted_sum * sigmoid_derivative(
-                    self.layer_list[i + 1].neurons[j].weighted_sum) * self.next_d(i + 1, k)
+                wagi = self.layer_list[i + 1].neurons[j].weights[j]
+                sigmoida = sigmoid_derivative(self.layer_list[i + 1].neurons[j].weighted_sum)
+                next = self.next_d(i + 1, k)
+                # result += self.layer_list[i + 1].neurons[j].weighted_sum * sigmoid_derivative(
+                #     self.layer_list[i + 1].neurons[j].weighted_sum) * self.next_d(i + 1, k)
+                result += wagi * sigmoida * next
             return result
 
     def set_inputs(self, inputs):
@@ -41,13 +46,18 @@ class Network:
             if i == 0:
                 for j in range(layer.neuron_num):
                     for k in range(len(self.inputs)):
-                        gradient_list.append(self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i, k))
+                        pierwsza_czesc = self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum)
+                        druga_czesc = self.next_d(i, k)
+                        # gradient_list.append(self.inputs[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i, k))
+                        gradient_list.append(pierwsza_czesc *  druga_czesc)
 
             else:
                 for j in range(layer.neuron_num):
                     for k in range(lower_layer.neuron_num):
-                        gradient_list.append(lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i,
-                                                                                                                    k))
+                        pierwsza_czesc = lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum)
+                        druga_czesc = self.next_d(i,k)
+                        # gradient_list.append(lower_layer.output[k] * sigmoid_derivative(layer.neurons[j].weighted_sum) * self.next_d(i,k))
+                        gradient_list.append(pierwsza_czesc * druga_czesc)
         return gradient_list
 
 
@@ -76,26 +86,29 @@ new_column = np.where(np.logical_or(name_column == "Iris-versicolor", name_colum
 # Create the NumPy array with the desired columns
 result_array = np.column_stack((width_column, new_column))
 
+training_data = result_array[:100] # 100 pierwszych
 
 
+test_data = result_array[:50] # 50 ostatnich
 
-
-
-
-learning_rate = 0.15
+learning_rate = 0.6
+momentum = 0.6
 network = Network(1, 1)
 
 
-np.random.shuffle(result_array)
+# np.random.shuffle(result_array)
 
-
-SGTALA = 2000
+SGTALA = 200
 for dupa in range(SGTALA):
 
-    np.random.shuffle(result_array)
-    for x in result_array:
+    sredni_koszt = 0
+
+    np.random.shuffle(training_data)
+    for x in training_data:
         table1 = [x[0]]
         table2 = [x[1]]
+    #     table1 = [0.2]
+    #     table2 = [1]
 
         network.set_inputs(table1)
         for net in network.layer_list:
@@ -117,10 +130,38 @@ for dupa in range(SGTALA):
     # network.layer_list[1].update_weights(trzy_tablice[1], learning_rate)
     # network.layer_list[0].update_weights(trzy_tablice[2], learning_rate)
 
-        network.layer_list[1].update_weights(gradient[0], learning_rate)
-        network.layer_list[0].update_weights(gradient[1], learning_rate)
+        network.layer_list[1].update_weights(gradient[0], learning_rate, momentum)
+        network.layer_list[0].update_weights(gradient[1], learning_rate, momentum)
 
-        if dupa == SGTALA - 1:
-            # sorted_array = result_array[result_array[:, 1].argsort()]
-            print(str(output) + " " + str(table2))
+        sredni_koszt += network.layer_list[1].mean_loss()
+        # if dupa == SGTALA - 1:
+        #     print(f"output {output} desired output {table2}")
+
+    if dupa == SGTALA - 1 or dupa == 0:
+        # sorted_array = result_array[result_array[:, 1].argsort()]
+        # print(str(output) + " " + str(table2))
+        print(f"sredni koszt {sredni_koszt / 150}")
+        # print(f"output {output} desired output {table2}")
+
+
+            # print(f"sredni koszt {sredni_koszt}")
+            # print(f"output {output}")
+
+
+
+
+#
+# for x in test_data:
+#     table1 = [x[0]]
+#     table2 = [x[1]]
+#
+#     network.set_inputs(table1)
+#     for net in network.layer_list:
+#         net.set_true_values(table2)
+#
+#     network.set_inputs(table1)
+#     forward1 = network.layer_list[0].forward(table1)
+#     output = network.layer_list[1].forward(forward1)
+
+
 
