@@ -35,6 +35,7 @@ for i, row in enumerate(data):
 training_data = np.array(training_data)
 test_data = np.array(test_data)
 
+
 # len training data = 80
 # np.savetxt('data.txt', training_data)
 # training_data = data[:130]
@@ -88,7 +89,10 @@ while run:
         with open(filename, 'rb') as file:
             mlp = pickle.load(file)
     elif output_menu == 5:
-        which_data_set = int(input("napisz 1 - zbiór irysów, 2 - autoasocjacja, 3 - własny zbiór: "))
+        which_data_set = int(input("""
+[1] - zbiór irysów
+[2] - autoasocjacja
+[3] - własny zbiór: """))
         data_for_training = None
         if which_data_set == 1:
             data_for_training = training_data  # trzeba odpowiednio wczytac
@@ -108,7 +112,10 @@ while run:
         print("statystyki zapisano do pliku!")
 
     elif output_menu == 6:
-        which_data_set = int(input("napisz 1 - zbiór irysów, 2 - autoasocjacja, 3 - własny zbiór: "))
+        which_data_set = int(input("""
+[1] - zbiór irysów
+[2] - autoasocjacja
+[3] - własny zbiór: """))
         data_for_testing = None
         if which_data_set == 1:
             data_for_testing = test_data  # trzeba odpowiednio wczytac
@@ -118,7 +125,5 @@ while run:
             data_for_testing = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
         mlp.test(test_data)
         print("statystyki zapisano do pliku!")
-
-
 
 # TODO dodac testowanie sieci

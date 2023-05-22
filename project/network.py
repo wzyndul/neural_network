@@ -114,8 +114,24 @@ class Network:
                     file.close()
                     break
 
-    def test(self, test_data):  # TODO zmień tą funkcje
-        for sample in test_data:
-            target = sample[4:]
-            self.forward(sample[:4])
-            print(f"{self.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
+    def test(self, test_data):
+        with open("testing_information.txt", "w") as file:
+            for i, sample in enumerate(test_data):
+                target = sample[4:]
+                sample_input = sample[:4]
+                self.forward(sample_input)
+                output = self.activations[-1]
+                file.write(f"wzorzec numer: {i}, {sample_input}\n")
+                file.write(f"popełniony błąd: {output - target}\n")
+                file.write(f"pożądany wzorzec odpowiedzi: {target}\n")
+                for x in range(len(output)):
+                    file.write(f"błąd popełniony na {x} wyjściu: {output[x] - target[x]}\n")
+                for x in range(len(output)):
+                    file.write(f"wartość na {x} wyjściu: {output[x]}\n")
+                # wszelkie wagi
+                file.write(f"wartości wag neuronów wyjściowych\n {self.weights[-1]}\n")
+                for x in reversed(range(1, len(self.activations)-1)):
+                    file.write(f"wartości wyjściowych neuronów ukrytych, warstwa {x}:\n {self.activations[x]}\n")
+                for x in reversed(range(len(self.weights)-1)):
+                    file.write(f"wartości wag neuronów ukrytych, warstwa {x}:\n {self.weights[x]}\n\n\n")
+
