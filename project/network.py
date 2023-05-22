@@ -4,16 +4,17 @@ from project.layer import Layer
 
 
 class Network:
-    def __init__(self, layer_num, input_num):
+    def __init__(self, layer_num, input_num, bias):
         self.layer_num = layer_num
         self.input_num = input_num
         self.layer_list = []
+        self.bias_on = bias
         inputs_layer = input_num
         for i in range(layer_num):
-            neuron_num = int(input(f"Enter number of neurons in {i + 1} hidden layer: "))
-            self.layer_list.append(Layer(inputs_layer, neuron_num))
+            neuron_num = int(input(f"podaj ilość neuronów w {i + 1} warstwie ukrytej: "))
+            self.layer_list.append(Layer(inputs_layer, neuron_num, bias))
             inputs_layer = neuron_num
-        self.layer_list.append(Layer(inputs_layer, int(input("Enter number of neurons in output layer: "))))
+        self.layer_list.append(Layer(inputs_layer, int(input("podaj ilość neuronów w warstwie wyjściowej: ")), bias))
 
         derivatives = [np.zeros((input_num, self.layer_list[0].neuron_num))]
         derivatives.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
@@ -28,6 +29,15 @@ class Network:
         weights.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
                         enumerate(self.layer_list[:-1])])
         self.weights = weights
+        self.old_weights = weights
+
+        biases = []
+        biases.extend([np.zeros(layer.neuron_num) for layer in self.layer_list])
+        self.biases = biases
+
+        derivatives_biases = []
+        derivatives_biases.extend([np.zeros(layer.neuron_num) for layer in self.layer_list])
+        self.derivatives_biases = derivatives_biases
 
     def forward(self, input_vector):
         self.activations[0] = np.array(input_vector)
@@ -36,6 +46,7 @@ class Network:
             next_activation = self.layer_list[x].forward(next_activation)
             self.activations[x + 1] = next_activation
             self.weights[x] = self.layer_list[x].get_weights()
+            self.biases[x] = self.layer_list[x].get_biases()
 
     def back_propagation(self, error):
         for x in reversed(range(len(self.derivatives))):
@@ -48,76 +59,79 @@ class Network:
 
             error = np.dot(delta, self.weights[x])
 
-    def update_weights(self, learning_rate):
+            self.derivatives_biases[x] = delta
+
+    def update_weights(self, learning_rate, momentum):
         for i in range(len(self.weights)):
-            weights = self.weights[i]
             derivatives = self.derivatives[i]
-            weights -= derivatives.T * learning_rate
+            if momentum != 0:
+                current_weights = self.weights[i]
+                self.weights[i] -= derivatives.T * learning_rate + (momentum * (current_weights - self.old_weights[i]))
+                self.old_weights[i] = current_weights
+            else:
+                self.weights[i] -= derivatives.T * learning_rate
+        self.update_neurons_weights()
+
+    def update_biases(self, learning_rate):
+        for i in range(len(self.biases)):
+            derivatives_biases = self.derivatives_biases[i]
+            self.biases[i] -= derivatives_biases * learning_rate
+        self.update_neurons_biases()
 
     def update_neurons_weights(self):
         for x in range(len(self.layer_list)):
             self.layer_list[x].update_weights(self.weights[x])
 
-    def train(self, inputs, targets, epochs, learning_rate):
+    def update_neurons_biases(self):
+        for x in range(len(self.layer_list)):
+            self.layer_list[x].update_biases(self.biases[x])
 
-        for i in range(epochs):
-            sum_errors = 0
-            for j, input in enumerate(inputs):
-                target = targets[j]
+    def train(self, input_data, epochs, learning_rate, jump, given_error, shuffle, momentum):
 
-                self.forward(input)
+        with open("training_information.txt", "w") as file:
+            for i in range(epochs):
+                if shuffle:
+                    np.random.shuffle(input_data)
+                sum_errors = 0
+                for sample in input_data:
+                    target = sample[self.input_num:]  # biore ostatnie wartosci po inputach
+                    self.forward(sample[:self.input_num])  # tyle ile jest inputów tyle biore
 
-                error = self.activations[-1] - target  # to bede outputy sieci
+                    error = self.activations[-1] - target  # to bede outputy sieci
+                    self.back_propagation(error)
 
-                self.back_propagation(error)
-                self.update_weights(learning_rate)
-                self.update_neurons_weights()
+                    self.update_weights(learning_rate, momentum)
 
-                sum_errors += mean_squared_error(target, self.activations[-1])
+                    if self.bias_on:
+                        self.update_biases(learning_rate)
 
-            print(f"Error: {sum_errors / len(inputs)} at epoch {i + 1}")
+                    sum_errors += mean_squared_error(target, self.activations[-1])
+                if i % jump == 0:
+                    file.write(f"Błąd: {sum_errors / len(input_data)} w epoce {i}\n")
+                if sum_errors / len(input_data) <= given_error:
+                    file.write(f"Uzyskano zadany poziom błędu w epoce {i}\n")
+                    file.write(f"błąd wynosi: {sum_errors / len(input_data)}\n")
+                    file.close()
+                    break
 
+    def test(self, test_data):
+        with open("testing_information.txt", "w") as file:
+            for i, sample in enumerate(test_data):
+                target = sample[4:]
+                sample_input = sample[:4]
+                self.forward(sample_input)
+                output = self.activations[-1]
+                file.write(f"wzorzec numer: {i}, {sample_input}\n")
+                file.write(f"popełniony błąd: {output - target}\n")
+                file.write(f"pożądany wzorzec odpowiedzi: {target}\n")
+                for x in range(len(output)):
+                    file.write(f"błąd popełniony na {x} wyjściu: {output[x] - target[x]}\n")
+                for x in range(len(output)):
+                    file.write(f"wartość na {x} wyjściu: {output[x]}\n")
+                # wszelkie wagi
+                file.write(f"wartości wag neuronów wyjściowych\n {self.weights[-1]}\n")
+                for x in reversed(range(1, len(self.activations)-1)):
+                    file.write(f"wartości wyjściowych neuronów ukrytych, warstwa {x}:\n {self.activations[x]}\n")
+                for x in reversed(range(len(self.weights)-1)):
+                    file.write(f"wartości wag neuronów ukrytych, warstwa {x}:\n {self.weights[x]}\n\n\n")
 
-if __name__ == "__main__":
-    data = []
-    with open('Data/iris.csv', 'r') as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                values = line.split(',')
-                features = [float(value) for value in values[:4]]
-                if values[4] == 'Iris-setosa':
-                    target = [1, 0, 0]
-                if values[4] == 'Iris-versicolor':
-                    target = [0, 1, 0]
-                if values[4] == 'Iris-virginica':
-                    target = [0, 0, 1]
-                data.append(features + target)
-
-    data = np.array(data)
-
-    training_data = data[:130]
-    test_data = data[130:]
-
-    items_data = training_data[:, :4]
-    targets_data = training_data[:, 4:7]
-
-    items_test = test_data[:, :4]
-    targets_test = test_data[:, 4:7]
-
-    # create a Multilayer Perceptron with one hidden layer
-    mlp = Network(2, 4)
-
-    # train network
-    mlp.train(items_data, targets_data, 130, 0.3)
-
-    for j, inputs in enumerate(items_test):
-        target = targets_test[j]
-        mlp.forward(inputs)
-        print(f"{mlp.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
-
-# TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
-# TODO wszelkie zapisywanie stanu do sieci itd
-# TODO zmienic inicjalizacje tych weights, derivatives itd
-# TODO zmienic trening
-# TODO ogarnac lepiej backpropagacje na odpowiedz
