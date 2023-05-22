@@ -4,7 +4,7 @@ from project.neuron import Neuron
 
 
 class Layer:
-    def __init__(self, input_num: int, neuron_num: int):
+    def __init__(self, input_num: int, neuron_num: int, bias: bool):
         """
         Initialize a layer with a specific number of input and neuron.
 
@@ -12,10 +12,12 @@ class Layer:
         :type input_num: int
         :param neuron_num: The number of neuron in this layer.
         :type neuron_num: int
+        :param bias: information if biases will be generated.
+        :type bias: bool
         """
         self.neuron_num = neuron_num
         self.input_num = input_num
-        self.neurons = np.array([Neuron(input_num) for _ in range(neuron_num)])
+        self.neurons = np.array([Neuron(input_num, bias) for _ in range(neuron_num)])
         self.output = None
 
     def forward(self, inputs):
@@ -56,6 +58,12 @@ class Layer:
         :return: The array of weights.
         :rtype: numpy.ndarray
         """
-        arr = np.array([neuron.weights for neuron in self.neurons])
-        return arr
+        return np.array([neuron.weights for neuron in self.neurons])
+
+    def get_biases(self):
+        return np.array([neuron.bias for neuron in self.neurons])
+
+    def update_biases(self, new_biases):
+        for x in range(len(self.neurons)):
+            self.neurons[x].update_bias(new_biases[x])
 
