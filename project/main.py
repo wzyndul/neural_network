@@ -2,38 +2,72 @@ import numpy as np
 import pickle
 from project.network import Network
 
-data = []
-with open('Data/iris.csv', 'r') as file:
-    for line in file:
-        line = line.strip()
-        if line:
-            values = line.split(',')
-            features = [float(value) for value in values[:4]]
-            if values[4] == 'Iris-setosa':
-                target = [1, 0, 0]
-            if values[4] == 'Iris-versicolor':
-                target = [0, 1, 0]
-            if values[4] == 'Iris-virginica':
-                target = [0, 0, 1]
-            data.append(features + target)
+# data = []
+# with open('Data/iris.csv', 'r') as file:
+#     for line in file:
+#         line = line.strip()
+#         if line:
+#             values = line.split(',')
+#             features = [float(value) for value in values[:4]]
+#             if values[4] == 'Iris-setosa':
+#                 target = [1, 0, 0]
+#             if values[4] == 'Iris-versicolor':
+#                 target = [0, 1, 0]
+#             if values[4] == 'Iris-virginica':
+#                 target = [0, 0, 1]
+#             data.append(features + target)
+#
+# data = np.array(data)
+#
+# # mam po 50 przypadków z każdego
+# data_setosa = data[:50, :]
+# data_versicolor = data[50:100, :]
+# data_virginica = data[100:150, :]
+#
+# #mieszam je
+# np.random.shuffle(data_setosa)
+# np.random.shuffle(data_versicolor)
+# np.random.shuffle(data_virginica)
+#
+# selected_samples_setosa = data_setosa[:10, :]
+# selected_samples_vers = data_versicolor[:10, :]
+# selected_samples_virg = data_virginica[:10, :]
+#
+# testing_data = np.concatenate((selected_samples_setosa, selected_samples_vers, selected_samples_virg), axis=0)
+#
+# np.savetxt('testing_data_iris.csv', testing_data, delimiter=',', fmt='%.1f')
+#
+# remaining_samples_setosa = data_setosa[10:, :]
+# remaining_samples_vers = data_versicolor[10:, :]
+# remaining_samples_virgi = data_virginica[10:, :]
+#
+# training_data = np.concatenate((remaining_samples_setosa, remaining_samples_vers, remaining_samples_virgi), axis=0)
+#
+# np.savetxt('training_data_iris.csv', training_data, delimiter=',', fmt='%.1f')
 
-data = np.array(data)
 
-# to sa te dane pomieszane ze tak powiem
-training_data = []
-test_data = []
 
-# Iterate over the rows in data
-for i, row in enumerate(data):
-    # Determine the destination based on the index
-    if i % 20 < 10:  # First 10 rows go to training data
-        training_data.append(row)
-    else:  # Next 10 rows go to test data
-        test_data.append(row)
+
+
+
+
+
+
+
+
+
+
+# # Iterate over the rows in data
+# for i, row in enumerate(data):
+#     # Determine the destination based on the index
+#     if i % 20 < 10:  # First 10 rows go to training data
+#         training_data.append(row)
+#     else:  # Next 10 rows go to test data
+#         test_data.append(row)
 
 # Convert the lists to NumPy arrays
-training_data = np.array(training_data)
-test_data = np.array(test_data)
+# training_data = np.array(training_data)
+# test_data = np.array(test_data)
 
 
 # len training data = 80
@@ -95,7 +129,8 @@ while run:
 [3] - własny zbiór: """))
         data_for_training = None
         if which_data_set == 1:
-            data_for_training = training_data  # trzeba odpowiednio wczytac
+            data_for_training = np.genfromtxt('Data/training_data_iris.csv', delimiter=',')
+            np.random.shuffle(data_for_training)  # mieszam to bo jest ustawione gatunkami narazie
         elif which_data_set == 2:
             pass  # TODO dane z drugiego zadania
         else:
@@ -118,12 +153,13 @@ while run:
 [3] - własny zbiór: """))
         data_for_testing = None
         if which_data_set == 1:
-            data_for_testing = test_data  # trzeba odpowiednio wczytac
+            data_for_testing = np.genfromtxt('Data/testing_data_iris.csv', delimiter=',')
+            np.random.shuffle(data_for_testing)  # mieszam to bo jest ustawione gatunkami narazie
         elif which_data_set == 2:
             pass  # TODO dane z drugiego zadania
         else:
             data_for_testing = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
-        mlp.test(test_data)
+        mlp.test(data_for_testing)
         print("statystyki zapisano do pliku!")
 
-# TODO dodac testowanie sieci
+

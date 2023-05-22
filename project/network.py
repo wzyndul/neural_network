@@ -122,7 +122,7 @@ class Network:
                 self.forward(sample_input)
                 output = self.activations[-1]
                 file.write(f"wzorzec numer: {i}, {sample_input}\n")
-                file.write(f"popełniony błąd: {output - target}\n")
+                file.write(f"popełniony błąd: {mean_squared_error(target, output)}\n")
                 file.write(f"pożądany wzorzec odpowiedzi: {target}\n")
                 for x in range(len(output)):
                     file.write(f"błąd popełniony na {x} wyjściu: {output[x] - target[x]}\n")
@@ -130,8 +130,8 @@ class Network:
                     file.write(f"wartość na {x} wyjściu: {output[x]}\n")
                 # wszelkie wagi
                 file.write(f"wartości wag neuronów wyjściowych\n {self.weights[-1]}\n")
-                for x in reversed(range(1, len(self.activations)-1)):
+                for x in reversed(range(1, len(self.activations) - 1)):
                     file.write(f"wartości wyjściowych neuronów ukrytych, warstwa {x}:\n {self.activations[x]}\n")
-                for x in reversed(range(len(self.weights)-1)):
-                    file.write(f"wartości wag neuronów ukrytych, warstwa {x}:\n {self.weights[x]}\n\n\n")
-
+                for x in reversed(range(len(self.weights) - 1)):
+                    file.write(f"wartości wag neuronów ukrytych, warstwa {x + 1}:\n {self.weights[x]}\n\n\n")
+                    # zwiekszam tu o jeden zeby pokryc index z wartościami neuronow ukrytych
