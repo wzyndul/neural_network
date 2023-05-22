@@ -2,7 +2,6 @@ import numpy as np
 import pickle
 from project.network import Network
 
-
 data = []
 with open('Data/iris.csv', 'r') as file:
     for line in file:
@@ -20,23 +19,34 @@ with open('Data/iris.csv', 'r') as file:
 
 data = np.array(data)
 
-training_data = data[:130]
-test_data = data[130:]
+# to sa te dane pomieszane ze tak powiem
+training_data = []
+test_data = []
 
-items_data = training_data[:, :4]
-targets_data = training_data[:, 4:7]
+# Iterate over the rows in data
+for i, row in enumerate(data):
+    # Determine the destination based on the index
+    if i % 20 < 10:  # First 10 rows go to training data
+        training_data.append(row)
+    else:  # Next 10 rows go to test data
+        test_data.append(row)
 
-items_test = test_data[:, :4]
-targets_test = test_data[:, 4:7]
+# Convert the lists to NumPy arrays
+training_data = np.array(training_data)
+test_data = np.array(test_data)
 
-mlp = Network(2, 4, True)
-# train network
-mlp.train(items_data, targets_data, 130, 0.3)
+# len training data = 80
+np.savetxt('data.txt', training_data)
+# training_data = data[:130]
+# test_data = data[130:]
+#
+# mlp = Network(2, 4, True)
+# mlp.train(training_data, 300, 0.3)
 
-for j, inputs in enumerate(items_test):
-    target = targets_test[j]
-    mlp.forward(inputs)
-    print(f"{mlp.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
+# for sample in test_data:
+#     target = sample[4:]
+#     mlp.forward(sample[:4])
+#     print(f"{mlp.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
 
 
 def choose_menu():
@@ -46,9 +56,11 @@ def choose_menu():
 [2] - stwórz sieć neuronową
 [3] - zapisz sieć neuronową do pliku
 [4] - wczytaj sieć neuronową z pliku
+[5] - trenuj sieć 
+[6] - testuj sieć
 : """)
-        if function_type not in ["1", "2", "3", "4"]:
-            print("Wybierz opcję 1, 2, 3 lub 4")
+        if function_type not in ["1", "2", "3", "4", "5", "6"]:
+            print("Wybierz opcję 1, 2, 3, 4, 5 lub 6.")
         else:
             break
     return int(function_type)
@@ -62,14 +74,11 @@ while run:
         run = False
     elif output_menu == 2:
         nr_of_inputs = int(input("podaj ile będzie wejść do sieci: "))
-        number = int(input("napisz 1 jeśli chcesz brać pod uwagę bias, 0 jeśli nie: "))
         is_bias_on = False
-        if number == 1:
+        if int(input("napisz 1 jeśli chcesz brać pod uwagę bias, 0 jeśli nie: ")) == 1:
             is_bias_on = True
         nr_of_hidden_layers = int(input("podaj ilość warstw ukrytych: "))
         mlp = Network(nr_of_hidden_layers, nr_of_inputs, is_bias_on)
-        print(mlp.weights)
-        print(mlp.biases)
     elif output_menu == 3:
         filename = input("podaj nazwe pliku,do którego chcesz zapisać sieć, bez rozszerenia: ") + ".pkl"
         with open(filename, 'wb') as file:
@@ -78,11 +87,35 @@ while run:
         filename = input("podaj nazwe pliku,z którego chcesz wczytać sieć, bez rozszerenia: ") + ".pkl"
         with open(filename, 'rb') as file:
             mlp = pickle.load(file)
+    elif output_menu == 5:
+        which_data_set = int(input("napisz 1 - zbiór irysów, 2 - autoasocjacja, 3 - własny zbiór: "))
+        data_for_training = None
+        if which_data_set == 1:
+            data_for_training = training_data  # trzeba odpowiednio wczytac
+        elif which_data_set == 2:
+            pass  # TODO dane z drugiego zadania
+        else:
+            data_for_training = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
+        nr_of_epochs = int(input("podaj liczbę epok: "))
+        learning_rate = float(input("podaj prędkość nauki: "))
+        error_level = float(input("podaj poziom błedu jaki chcesz osiągnąć: "))
+        jump = int(input("podaj co ile epok mają być rejestrowane statystyki: "))
+        shuffle = False
+        if int(input("napisz 1 jeśli chcesz mieszać kolejności prezentacji wzorców: ")) == 1:
+            shuffle = True
+        momentum = float(input("podaj wartość momentum: "))
+        mlp.train(data_for_training, nr_of_epochs, learning_rate, jump, error_level, shuffle, momentum)
+
+    elif output_menu == 6:
+        which_data_set = int(input("napisz 1 - zbiór irysów, 2 - autoasocjacja, 3 - własny zbiór: "))
+        data_for_testing = None
+        if which_data_set == 1:
+            data_for_testing = test_data  # trzeba odpowiednio wczytac
+        elif which_data_set == 2:
+            pass  # TODO dane z drugiego zadania
+        else:
+            data_for_testing = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
 
 
-
-# TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
-# TODO wszelkie zapisywanie stanu do sieci itd
-# TODO zmienic inicjalizacje tych weights, derivatives itd
-# TODO zmienic trening
-# TODO ogarnac lepiej backpropagacje na odpowiedz
+# TODO dodac obsluge momentum
+# TODO dodac testowanie sieci

@@ -14,7 +14,7 @@ class Network:
             neuron_num = int(input(f"podaj ilość neuronów w {i + 1} warstwie ukrytej: "))
             self.layer_list.append(Layer(inputs_layer, neuron_num, bias))
             inputs_layer = neuron_num
-        self.layer_list.append(Layer(inputs_layer, int(input("podaj ilość neuronów w warstwie ulrytej: ")), bias))
+        self.layer_list.append(Layer(inputs_layer, int(input("podaj ilość neuronów w warstwie wyjściowej: ")), bias))
 
         derivatives = [np.zeros((input_num, self.layer_list[0].neuron_num))]
         derivatives.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
@@ -82,14 +82,16 @@ class Network:
         for x in range(len(self.layer_list)):
             self.layer_list[x].update_biases(self.biases[x])
 
-    def train(self, inputs, targets, epochs, learning_rate):
+    def train(self, input_data, epochs, learning_rate, jump, given_error, shuffle, momentum):
+        # jakies if momentum == 0 to wtedy nie bierzemy go pod uwage
 
         for i in range(epochs):
+            if shuffle:
+                np.random.shuffle(input_data)
             sum_errors = 0
-            for j, sample in enumerate(inputs):
-                target = targets[j]
-
-                self.forward(sample)
+            for sample in input_data:
+                target = sample[self.input_num:]  # biore ostatnie wartosci po inputach
+                self.forward(sample[:self.input_num])  # tyle ile jest inputów tyle biore
 
                 error = self.activations[-1] - target  # to bede outputy sieci
                 self.back_propagation(error)
@@ -98,5 +100,9 @@ class Network:
                     self.update_biases(learning_rate)
 
                 sum_errors += mean_squared_error(target, self.activations[-1])
-
-            print(f"Error: {sum_errors / len(inputs)} at epoch {i + 1}")
+            if i % jump == 0:
+                print(f"Błąd: {sum_errors / len(input_data)} w epoce {i + 1}")
+            if sum_errors / len(input_data) <= given_error:
+                print(f"Uzyskano zadany poziom błędu w epoce {i + 1}")
+                print(f"błąd wynosi: {sum_errors / len(input_data)}")
+                break
