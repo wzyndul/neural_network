@@ -36,13 +36,13 @@ training_data = np.array(training_data)
 test_data = np.array(test_data)
 
 # len training data = 80
-np.savetxt('data.txt', training_data)
+# np.savetxt('data.txt', training_data)
 # training_data = data[:130]
 # test_data = data[130:]
 #
 # mlp = Network(2, 4, True)
 # mlp.train(training_data, 300, 0.3)
-
+#
 # for sample in test_data:
 #     target = sample[4:]
 #     mlp.forward(sample[:4])
@@ -103,8 +103,9 @@ while run:
         shuffle = False
         if int(input("napisz 1 jeśli chcesz mieszać kolejności prezentacji wzorców: ")) == 1:
             shuffle = True
-        momentum = float(input("podaj wartość momentum: "))
+        momentum = float(input("podaj wartość  współczynnika momentum: "))
         mlp.train(data_for_training, nr_of_epochs, learning_rate, jump, error_level, shuffle, momentum)
+        print("statystyki zapisano do pliku!")
 
     elif output_menu == 6:
         which_data_set = int(input("napisz 1 - zbiór irysów, 2 - autoasocjacja, 3 - własny zbiór: "))
@@ -115,7 +116,9 @@ while run:
             pass  # TODO dane z drugiego zadania
         else:
             data_for_testing = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
+        mlp.test(test_data)
+        print("statystyki zapisano do pliku!")
 
 
-# TODO dodac obsluge momentum
+
 # TODO dodac testowanie sieci

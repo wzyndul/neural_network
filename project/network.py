@@ -29,6 +29,7 @@ class Network:
         weights.extend([np.zeros((layer.neuron_num, self.layer_list[i + 1].neuron_num)) for i, layer in
                         enumerate(self.layer_list[:-1])])
         self.weights = weights
+        self.old_weights = weights
 
         biases = []
         biases.extend([np.zeros(layer.neuron_num) for layer in self.layer_list])
@@ -60,18 +61,21 @@ class Network:
 
             self.derivatives_biases[x] = delta
 
-    def update_weights(self, learning_rate):
+    def update_weights(self, learning_rate, momentum):
         for i in range(len(self.weights)):
-            weights = self.weights[i]
             derivatives = self.derivatives[i]
-            weights -= derivatives.T * learning_rate
+            if momentum != 0:
+                current_weights = self.weights[i]
+                self.weights[i] -= derivatives.T * learning_rate + (momentum * (current_weights - self.old_weights[i]))
+                self.old_weights[i] = current_weights
+            else:
+                self.weights[i] -= derivatives.T * learning_rate
         self.update_neurons_weights()
 
     def update_biases(self, learning_rate):
         for i in range(len(self.biases)):
-            biases = self.biases[i]
             derivatives_biases = self.derivatives_biases[i]
-            biases -= derivatives_biases * learning_rate
+            self.biases[i] -= derivatives_biases * learning_rate
         self.update_neurons_biases()
 
     def update_neurons_weights(self):
@@ -83,26 +87,35 @@ class Network:
             self.layer_list[x].update_biases(self.biases[x])
 
     def train(self, input_data, epochs, learning_rate, jump, given_error, shuffle, momentum):
-        # jakies if momentum == 0 to wtedy nie bierzemy go pod uwage
 
-        for i in range(epochs):
-            if shuffle:
-                np.random.shuffle(input_data)
-            sum_errors = 0
-            for sample in input_data:
-                target = sample[self.input_num:]  # biore ostatnie wartosci po inputach
-                self.forward(sample[:self.input_num])  # tyle ile jest inputów tyle biore
+        with open("training_information.txt", "w") as file:
+            for i in range(epochs):
+                if shuffle:
+                    np.random.shuffle(input_data)
+                sum_errors = 0
+                for sample in input_data:
+                    target = sample[self.input_num:]  # biore ostatnie wartosci po inputach
+                    self.forward(sample[:self.input_num])  # tyle ile jest inputów tyle biore
 
-                error = self.activations[-1] - target  # to bede outputy sieci
-                self.back_propagation(error)
-                self.update_weights(learning_rate)
-                if self.bias_on:
-                    self.update_biases(learning_rate)
+                    error = self.activations[-1] - target  # to bede outputy sieci
+                    self.back_propagation(error)
 
-                sum_errors += mean_squared_error(target, self.activations[-1])
-            if i % jump == 0:
-                print(f"Błąd: {sum_errors / len(input_data)} w epoce {i + 1}")
-            if sum_errors / len(input_data) <= given_error:
-                print(f"Uzyskano zadany poziom błędu w epoce {i + 1}")
-                print(f"błąd wynosi: {sum_errors / len(input_data)}")
-                break
+                    self.update_weights(learning_rate, momentum)
+
+                    if self.bias_on:
+                        self.update_biases(learning_rate)
+
+                    sum_errors += mean_squared_error(target, self.activations[-1])
+                if i % jump == 0:
+                    file.write(f"Błąd: {sum_errors / len(input_data)} w epoce {i}\n")
+                if sum_errors / len(input_data) <= given_error:
+                    file.write(f"Uzyskano zadany poziom błędu w epoce {i}\n")
+                    file.write(f"błąd wynosi: {sum_errors / len(input_data)}\n")
+                    file.close()
+                    break
+
+    def test(self, test_data):  # TODO zmień tą funkcje
+        for sample in test_data:
+            target = sample[4:]
+            self.forward(sample[:4])
+            print(f"{self.layer_list[-1].output} wynik sieci\n {target} wynik wzorcowy")
