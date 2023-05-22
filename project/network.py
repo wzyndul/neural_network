@@ -86,10 +86,10 @@ class Network:
 
         for i in range(epochs):
             sum_errors = 0
-            for j, input in enumerate(inputs):
+            for j, sample in enumerate(inputs):
                 target = targets[j]
 
-                self.forward(input)
+                self.forward(sample)
 
                 error = self.activations[-1] - target  # to bede outputy sieci
                 self.back_propagation(error)

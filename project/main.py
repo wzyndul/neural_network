@@ -1,6 +1,7 @@
 import numpy as np
-
+import pickle
 from project.network import Network
+
 
 data = []
 with open('Data/iris.csv', 'r') as file:
@@ -28,7 +29,6 @@ targets_data = training_data[:, 4:7]
 items_test = test_data[:, :4]
 targets_test = test_data[:, 4:7]
 
-# create a Multilayer Perceptron with one hidden layer
 mlp = Network(2, 4, True)
 # train network
 mlp.train(items_data, targets_data, 130, 0.3)
@@ -44,9 +44,8 @@ def choose_menu():
         function_type = input("""\nWybierz działanie z listy:
 [1] - wyjdź z programu
 [2] - stwórz sieć neuronową
-[3] - wczytaj sieć neuronową z pliku
-[4] - zapisz sieć neuronową do pliku
-
+[3] - zapisz sieć neuronową do pliku
+[4] - wczytaj sieć neuronową z pliku
 : """)
         if function_type not in ["1", "2", "3", "4"]:
             print("Wybierz opcję 1, 2, 3 lub 4")
@@ -69,10 +68,18 @@ while run:
             is_bias_on = True
         nr_of_hidden_layers = int(input("podaj ilość warstw ukrytych: "))
         mlp = Network(nr_of_hidden_layers, nr_of_inputs, is_bias_on)
+        print(mlp.weights)
+        print(mlp.biases)
     elif output_menu == 3:
-        pass
+        filename = input("podaj nazwe pliku,do którego chcesz zapisać sieć, bez rozszerenia: ") + ".pkl"
+        with open(filename, 'wb') as file:
+            pickle.dump(mlp, file)
     elif output_menu == 4:
-        pass
+        filename = input("podaj nazwe pliku,z którego chcesz wczytać sieć, bez rozszerenia: ") + ".pkl"
+        with open(filename, 'rb') as file:
+            mlp = pickle.load(file)
+
+
 
 # TODO uwzglednic biasy, zrobic cały mechanizm tegoo czy w ogole je uwzglednic czy nie
 # TODO wszelkie zapisywanie stanu do sieci itd
