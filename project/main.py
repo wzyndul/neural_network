@@ -75,7 +75,7 @@ while run:
             data_for_testing = np.genfromtxt('Data/testing_data_iris.csv', delimiter=',')
             np.random.shuffle(data_for_testing)  # mieszam to bo jest ustawione gatunkami narazie
         elif which_data_set == 2:
-            data_for_testing = np.loadtxt(input("podaj nazwę pliku z rozszerzeniem txt: "))
+            data_for_testing = np.genfromtxt('Data/autoasocjacja.csv', delimiter=',')
         mlp.test(data_for_testing)
         print("statystyki zapisano do pliku!")
 

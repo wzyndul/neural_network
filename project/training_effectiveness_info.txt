@@ -1,16 +1,16 @@
-class: 0 +
+class: 0
+TP: 10.0 TN: 19.0 FP: 1.0 FN: 0.0
+Precision: 0.9090909090909091 Recall: 1.0 F-measure: 0.9523809523809523 
+
+class: 1
+TP: 9.0 TN: 20.0 FP: 0.0 FN: 1.0
+Precision: 1.0 Recall: 0.9 F-measure: 0.9473684210526316 
+
+class: 2
 TP: 10.0 TN: 20.0 FP: 0.0 FN: 0.0
 Precision: 1.0 Recall: 1.0 F-measure: 1.0 
 
-class: 1 +
-TP: 10.0 TN: 20.0 FP: 0.0 FN: 0.0
-Precision: 1.0 Recall: 1.0 F-measure: 1.0 
 
-class: 2 +
-TP: 10.0 TN: 20.0 FP: 0.0 FN: 0.0
-Precision: 1.0 Recall: 1.0 F-measure: 1.0 
+ correctly classified: 29.0
 
-
- correctly classified: 30.0
-
- inorrectly classified: 0.0
+ incorrectly classified: 1.0

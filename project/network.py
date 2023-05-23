@@ -1,7 +1,7 @@
 import numpy as np
 from project.functions import sigmoid_derivative, mean_squared_error
 from project.layer import Layer
-
+import matplotlib.pyplot as plt
 
 class Network:
     def __init__(self, layer_num, input_num, bias):
@@ -87,7 +87,7 @@ class Network:
             self.layer_list[x].update_biases(self.biases[x])
 
     def train(self, input_data, epochs, learning_rate, jump, given_error, shuffle, momentum):
-
+        mistakes = []
         with open("training_information.txt", "w") as file:
             for i in range(epochs):
                 if shuffle:
@@ -107,12 +107,21 @@ class Network:
 
                     sum_errors += mean_squared_error(target, self.activations[-1])
                 if i % jump == 0:
-                    file.write(f"Błąd: {sum_errors / len(input_data)} w epoce {i}\n")
+                    file.write(f"{sum_errors / len(input_data)}\n")
+                    mistakes.append(sum_errors / len(input_data))
                 if sum_errors / len(input_data) <= given_error:
                     file.write(f"Uzyskano zadany poziom błędu w epoce {i}\n")
                     file.write(f"błąd wynosi: {sum_errors / len(input_data)}\n")
+                    x_values = np.arange(0, i, 1)
+                    plt.plot(x_values, mistakes)
+                    plt.show()
+
                     file.close()
                     break
+            x_values = np.arange(0, epochs, 1)
+            plt.plot(x_values, mistakes)
+            plt.show()
+
 
     def test(self, test_data):
         nr_of_outputs = test_data.shape[1] - self.input_num
