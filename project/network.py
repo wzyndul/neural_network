@@ -115,12 +115,21 @@ class Network:
                     break
 
     def test(self, test_data):
+        nr_of_outputs = test_data.shape[1] - self.input_num
+        correctly_guessed = 0
+        incorrectly_guessed = 0
+        confusion_matrix = np.zeros((nr_of_outputs, nr_of_outputs))
         with open("testing_information.txt", "w") as file:
             for i, sample in enumerate(test_data):
-                target = sample[4:]
-                sample_input = sample[:4]
+                target = sample[self.input_num:]
+                sample_input = sample[:self.input_num]
                 self.forward(sample_input)
                 output = self.activations[-1]
+
+                predicted_class = np.argmax(output)  # zwraca index największego wyrażenia
+                target_class = np.argmax(target)
+                confusion_matrix[target_class, predicted_class] += 1
+
                 file.write(f"wzorzec numer: {i}, {sample_input}\n")
                 file.write(f"popełniony błąd: {mean_squared_error(target, output)}\n")
                 file.write(f"pożądany wzorzec odpowiedzi: {target}\n")
@@ -135,3 +144,33 @@ class Network:
                 for x in reversed(range(len(self.weights) - 1)):
                     file.write(f"wartości wag neuronów ukrytych, warstwa {x + 1}:\n {self.weights[x]}\n\n\n")
                     # zwiekszam tu o jeden zeby pokryc index z wartościami neuronow ukrytych
+        file.close()
+
+        confusion_string = ""
+        for i in range(nr_of_outputs):
+            confusion_string += f"class: {i}\n"
+            tp = confusion_matrix[i, i]
+            tn = 0
+            fp = 0
+            fn = 0
+            for j in range(nr_of_outputs):
+                for k in range(nr_of_outputs):
+                    if k != i and j != i:
+                        tn += confusion_matrix[j, k]
+
+            for j in range(nr_of_outputs):
+                if j != i:
+                    fp += confusion_matrix[j, i]
+                    fn += confusion_matrix[i, j]
+
+            confusion_string += f"TP: {tp} TN: {tn} FP: {fp} FN: {fn}\n"
+            precision = tp / (tp + fp)
+            recall = tp / (tp + fn)
+            f_measure = 2 * (precision * recall) / (precision + recall)
+            confusion_string += f"Precision: {precision} Recall: {recall} F-measure: {f_measure} \n\n"
+            correctly_guessed += tp
+            incorrectly_guessed += fp
+        with open("training_effectiveness_info.txt", "w") as file:
+            file.write(confusion_string)
+            file.write(f"\n correctly classified: {correctly_guessed}\n")
+            file.write(f"\n incorrectly classified: {incorrectly_guessed}\n")
